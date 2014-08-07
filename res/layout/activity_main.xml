@@ -6,34 +6,50 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#252525"
     tools:context=".MainActivity" >
-
+	<ImageView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/battery_image"
+	    android:layout_centerHorizontal="true"
+	    android:layout_alignParentTop="true"
+	    android:src="@drawable/bt50"/>
     <TextView
         android:id="@+id/batterypercent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/progressBar1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
+        android:textColor="#e6e6e6"
+        android:textSize="35sp"
+        android:layout_below="@id/battery_image"
         android:text="percent" />
 
     <TextView
         android:id="@+id/BatteryLevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/batterypercent"
+        android:layout_marginTop="15dp"
+        android:textColor="#f0f0f0"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="56dp"
         android:text="          " />
 
-    <ProgressBar
-        android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleHorizontal"
+    <Button 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/BatteryLevel"
+        android:text="电量使用情况"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="65dp"
-        android:minWidth="200dp" />
-
+        android:layout_alignParentBottom="true"
+        android:textColor="#e4e4e4"
+        android:id="@+id/settingsbutton"/>
+	<Button
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/BatteryLevel"
+	    android:layout_centerHorizontal="true"
+	    android:id="@+id/powersave"
+	    android:textColor="#f0f0f0"
+	    android:text="一键省电"/>
 </RelativeLayout>

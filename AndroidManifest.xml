@@ -2,8 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yusun.batterymonitor"
     android:versionCode="1"
-    android:versionName="1.0" >
 
+    android:versionName="1.0" >
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>  
+	<uses-permission android:name="android.permission.BLUETOOTH" />
+	 <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+	 <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+	 <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
@@ -22,6 +28,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity 
+            android:name=".ActToggleGPS"></activity>
     </application>
 
 </manifest>
