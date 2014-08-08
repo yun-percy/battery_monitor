@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="usb_chatge">450</integer>
+    <integer name="AC_chage">610</integer>
+    <integer name="battery_full">1900</integer>
+</resources>

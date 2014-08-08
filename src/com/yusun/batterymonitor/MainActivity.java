@@ -173,12 +173,40 @@ public class MainActivity extends Activity {
 			int plugged = i.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
 			int status = i.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
 			int vate = i.getIntExtra(BatteryManager.EXTRA_VOLTAGE,0);
-			System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$    " +vate);
-			
+			int mhealth = i.getIntExtra(BatteryManager.EXTRA_HEALTH,0);
+			System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$    " +mhealth);
+			String healthString = "";
+			                 
+			               switch (mhealth) {
+			              case BatteryManager.BATTERY_HEALTH_UNKNOWN:
+			                   healthString = "未知";
+		                   break;
+			                case BatteryManager.BATTERY_HEALTH_GOOD:
+			                    healthString = "良好";
+				                    break;
+			                case BatteryManager.BATTERY_HEALTH_OVERHEAT:
+				                    healthString = "过热";
+				                    break;
+				                case BatteryManager.BATTERY_HEALTH_DEAD:
+				                    healthString = "损坏";
+				                    break;
+				                case BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE:
+				                    healthString = "电压过高";
+				                    break;
+				                case BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE:
+			                    healthString = "获取失败";
+				                    break;
+				                }
 			
 			percent = level + "%";
 			TextView BatteryShow = (TextView) findViewById(R.id.BatteryLevel);
 			TextView Batteryp = (TextView) findViewById(R.id.batterypercent);
+			TextView health =(TextView) findViewById(R.id.health);
+			TextView charge_time=(TextView) findViewById(R.id.charge_time);
+			health.setText("电池状态 ：" + healthString);
+			long mvote = vate/1000;
+			TextView vote =(TextView)findViewById(R.id.vote);
+			vote.setText("充电电压： " + vate/1000 + "V");
 			charge=(ImageView)findViewById(R.id.charge);
 			settingbutton=(Button) findViewById(R.id.settingsbutton);
 			settingbutton.setOnClickListener(settingOnClickListener);
