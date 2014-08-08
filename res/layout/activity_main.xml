@@ -23,61 +23,89 @@
 	    android:layout_centerHorizontal="true"
 	    android:layout_alignParentTop="true"
 	    android:src="@drawable/charging"/>
+	<ImageView 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/line"
+	    android:layout_centerInParent="true"
+	    android:src="@drawable/line"
+	    android:layout_marginTop="10dp"
+	    />
     <TextView
         android:id="@+id/batterypercent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
+        android:padding="6dp"
         android:textColor="#e6e6e6"
         android:textSize="35sp"
-        android:layout_below="@id/battery_image"
         android:text="percent" />
 
     <TextView
         android:id="@+id/BatteryLevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/batterypercent"
+        android:layout_below="@id/line"
         android:layout_marginTop="15dp"
         android:textColor="#f0f0f0"
-        android:layout_centerHorizontal="true"
-        android:text="          " />
+         />
+    
 	<TextView 
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:id="@+id/health"
-	    android:layout_below="@id/batterypercent"
-	    android:layout_alignParentLeft="true"
+	    android:layout_below="@id/BatteryLevel"
 	    android:textColor="#f0f0f0"/>
 	<TextView 
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:id="@+id/vote"
-	    android:layout_below="@id/batterypercent"
-	    android:layout_alignParentRight="true"
+	    android:layout_below="@id/health"
 	    android:textColor="#f0f0f0"/>
+	<TextView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/tempearture"
+	    android:textColor="#f0f0f0"
+	    android:layout_below="@id/vote"
+	     />
+	
+	<TextView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/charge_time"
+	    android:textColor="#f0f0f0"
+	    android:layout_marginTop="30dp"
+        android:textSize="25sp"
+	    android:layout_below="@id/tempearture"
+	    android:layout_centerHorizontal="true"/>
+	<TextView
+	    android:layout_width="wrap_content"
+	    android:layout_below="@id/tempearture"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/hit_time"
+	    android:textColor="#f0f0f0"
+	    android:visibility="gone"
+	    android:text="剩余充电时间:"
+	   />
     <Button 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="电量使用情况"
-        android:layout_centerHorizontal="true"
+        
+        android:background="@drawable/button_bg"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:textColor="#e4e4e4"
         android:id="@+id/settingsbutton"/>
 	<Button
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:layout_below="@id/BatteryLevel"
-	    android:layout_centerHorizontal="true"
+	    android:layout_alignParentBottom="true"
+	    
+	    
 	    android:id="@+id/powersave"
 	    android:textColor="#f0f0f0"
+	    android:background="@drawable/button_bg"
 	    android:text="一键省电"/>
-	<TextView 
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:id="@+id/charge_time"
-	    android:textColor="#f0f0f0"
-	    android:layout_below="@id/powersave"
-	    android:layout_centerHorizontal="true"/>
+	
 </RelativeLayout>

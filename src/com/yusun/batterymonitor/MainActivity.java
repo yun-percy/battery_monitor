@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
@@ -174,6 +175,7 @@ public class MainActivity extends Activity {
 			int status = i.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
 			int vate = i.getIntExtra(BatteryManager.EXTRA_VOLTAGE,0);
 			int mhealth = i.getIntExtra(BatteryManager.EXTRA_HEALTH,0);
+			int mtempearture =i.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,0);
 			System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$    " +mhealth);
 			String healthString = "";
 			                 
@@ -203,16 +205,51 @@ public class MainActivity extends Activity {
 			TextView Batteryp = (TextView) findViewById(R.id.batterypercent);
 			TextView health =(TextView) findViewById(R.id.health);
 			TextView charge_time=(TextView) findViewById(R.id.charge_time);
-			health.setText("电池状态 ：" + healthString);
-			long mvote = vate/1000;
+			TextView hit_time=(TextView)findViewById(R.id.hit_time);
+			TextView tempearture =(TextView) findViewById(R.id.tempearture);
+			
 			TextView vote =(TextView)findViewById(R.id.vote);
-			vote.setText("充电电压： " + vate/1000 + "V");
+			vote.setText("充电电压 ： " + vate/1000 + "V");
+			health.setText("电池状态 ：" + healthString);
+			tempearture.setText("电池温度 ："+mtempearture/10+"℃");
 			charge=(ImageView)findViewById(R.id.charge);
 			settingbutton=(Button) findViewById(R.id.settingsbutton);
 			settingbutton.setOnClickListener(settingOnClickListener);
 			Animation operatingAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.round_charge);  
 			LinearInterpolator lin = new LinearInterpolator();  
 			operatingAnim.setInterpolator(lin); 
+			// 计算还需充多久电
+			Resources res =getResources();
+			double Charge_factor=1.3;
+			int Battery_Capacity=res.getInteger(R.integer.battery_capacity);
+			int h=0;
+			int m=0;
+			int s=0;
+			int Charge_Mode_Volume = 500;
+			if (plugged == 1){
+				Charge_factor=1.2;
+				Charge_Mode_Volume=res.getInteger(R.integer.ac_charge);
+			}
+				else {
+					Charge_Mode_Volume=res.getInteger(R.integer.usb_charge);
+					Charge_factor=1.4;
+			}
+			double Battery_Level = (double)level;
+			h=(int)(Battery_Capacity*Charge_factor*(1-Battery_Level/100)/Charge_Mode_Volume) ;
+			m=(int) ((Battery_Capacity*Charge_factor*(1-Battery_Level/100)/Charge_Mode_Volume -h)*60);
+			charge_time.setText( h +"小时 "+m+"分钟");
+		
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			//----------------------分割线------------
 			if (operatingAnim != null && charge != null && operatingAnim.hasStarted()) {  
 		    	charge.clearAnimation();  
 		        charge.startAnimation(operatingAnim);  
@@ -225,17 +262,33 @@ public class MainActivity extends Activity {
 				connect = "未连接";
 				charge.clearAnimation();  
 				charge.setVisibility(8);
+				BatteryShow.setVisibility(8);
+				
+				vote.setVisibility(8);
+				charge_time.setVisibility(8);
+				hit_time.setVisibility(8);
+				
 			} else if (plugged == 1) {
 				connect = "电源";
+				BatteryShow.setVisibility(0);
+				
+				vote.setVisibility(0);
+				charge_time.setVisibility(0);
+				hit_time.setVisibility(0);
 			} else {
 				connect = "USB";
+				BatteryShow.setVisibility(0);
+				
+				vote.setVisibility(0);
+				charge_time.setVisibility(0);
+				hit_time.setVisibility(0);
 			}
 			
 			if (status == 2) {
 				statusshow = "正在充电";
 				charge.setVisibility(0);
 				charge.startAnimation(operatingAnim);  
-				
+			
 			} 
 			else if(status == 5){
 				statusshow = "正在涓流保护充电";
@@ -246,7 +299,7 @@ public class MainActivity extends Activity {
 				System.out.println("status is==== ===========" + status);
 				statusshow = "放电中";
 			}
-			batteryText = "连接到:"+ connect + "\n" + statusshow;
+			batteryText = "已连接到"+ connect ;
 			BatteryShow.setText(batteryText);
 			Batteryp.setText(percent);
 			
