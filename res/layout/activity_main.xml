@@ -15,6 +15,14 @@
 	    android:layout_centerHorizontal="true"
 	    android:layout_alignParentTop="true"
 	    android:src="@drawable/bt50"/>
+	<ImageView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/charge"
+	    android:visibility="gone"
+	    android:layout_centerHorizontal="true"
+	    android:layout_alignParentTop="true"
+	    android:src="@drawable/charging"/>
     <TextView
         android:id="@+id/batterypercent"
         android:layout_width="wrap_content"

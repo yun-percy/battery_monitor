@@ -1,66 +1,122 @@
 package com.yusun.batterymonitor;
-import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
+
+import java.lang.reflect.Method;
+
 import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.os.Bundle;
 import android.provider.Settings;
-import android.provider.Settings.SettingNotFoundException;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
-import android.view.WindowManager;
-  
-public class ActToggleGPS extends Activity implements OnClickListener {  
 
-    private static final int WIFI = 0;  
+public class ActToggleGPS {
 
-    private int screenMode;  
-    private static final String TAG = "ScreenLuminance";  
-    private int screenBrightness;  
-  
-    @Override  
-    public void onCreate(Bundle savedInstanceState) {  
-        super.onCreate(savedInstanceState);  
-        BluetoothAdapter bluetoothadapter = BluetoothAdapter.getDefaultAdapter();
-        bluetoothadapter.disable();
-        Settings.System.putInt(getContentResolver(),android.provider.Settings.System.SCREEN_OFF_TIMEOUT,-1);
-        toggle(this, WIFI); 
-        try {  
-        screenMode = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE);  
-        Log.i(TAG, "screenMode = " + screenMode);  
-        screenBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);  
-        Log.i(TAG, "screenBrightness = " + screenBrightness);  
-        if (screenMode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {  
-            setScreenMode(Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);  
-        }  
-        setScreenBrightness(0.0F);  
-        } catch (SettingNotFoundException e) {  
-            e.printStackTrace();  
-        }  
-    }
-    private void setScreenMode(int value) {  
-        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, value);  
+	private Context context;
+	private ConnectivityManager connManager;
+
+	public ActToggleGPS(Context context) {
+		this.context = context;
+		System.out.println("******************************************");
+		connManager = (ConnectivityManager) this.context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+	}
+
+	/**
+	 * @return 网络是否连接可用
+	 */
+	public boolean isNetworkConnected() {
+
+		NetworkInfo networkinfo = connManager.getActiveNetworkInfo();
+
+		if (networkinfo != null) {
+			return networkinfo.isConnected();
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return wifi是否连接可用
+	 */
+	public boolean isWifiConnected() {
+
+		NetworkInfo mWifi = connManager
+				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		System.out.println("******************************************");
+		if (mWifi != null) {
+			return mWifi.isConnected();
+		}
+
+		return false;
+	}
+
+	/**
+	 * 当wifi不能访问网络时，mobile才会起作用
+	 * @return GPRS是否连接可用
+	 */
+	public boolean isMobileConnected() {
+
+		NetworkInfo mMobile = connManager
+				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+		System.out.println("******************************************");
+		if (mMobile != null) {
+			return mMobile.isConnected();
+		}
+		return false;
+	}
+
+	/**
+	 * GPRS网络开关 反射ConnectivityManager中hide的方法setMobileDataEnabled 可以开启和关闭GPRS网络
+	 * 
+	 * @param isEnable
+	 * @throws Exception
+	 */
+	public void toggleGprs(boolean isEnable) throws Exception {
+		Class<?> cmClass = connManager.getClass();
+		Class<?>[] argClasses = new Class[1];
+		argClasses[0] = boolean.class;
+
+		// 反射ConnectivityManager中hide的方法setMobileDataEnabled，可以开启和关闭GPRS网络
+		Method method = cmClass.getMethod("setMobileDataEnabled", argClasses);
+		method.invoke(connManager, isEnable);
+	}
+
+	/**
+	 * WIFI网络开关
+	 * 
+	 * @param enabled
+	 * @return 设置是否success
+	 */
+	public boolean toggleWiFi(boolean enabled) {
+		WifiManager wm = (WifiManager) context
+				.getSystemService(Context.WIFI_SERVICE);
+		return wm.setWifiEnabled(enabled);
+
+	}
+	
+    /**
+     * 
+     * @return 是否处于飞行模式
+     */
+    public boolean isAirplaneModeOn() {  
+        // 返回值是1时表示处于飞行模式  
+        int modeIdx = Settings.System.getInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0);  
+        boolean isEnabled = (modeIdx == 1);
+        return isEnabled;
     }  
-    private void setScreenBrightness(float value) {  
-        Window mWindow = getWindow();  
-        WindowManager.LayoutParams mParams = mWindow.getAttributes();  
-        float f = value / 255.0F;  
-        mParams.screenBrightness = f;  
-        mWindow.setAttributes(mParams);  
-        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, (int) value);  
-    }  
-    public static void toggle(Context context, int idx) {  
-    	WifiManager manager =null;
-    	manager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-    	manager.setWifiEnabled(false);   
+    /**
+     * 飞行模式开关
+     * @param setAirPlane
+     */
+    public void toggleAirplaneMode(boolean setAirPlane) {  
+        Settings.System.putInt(context.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, setAirPlane ? 1 : 0);  
+        // 广播飞行模式信号的改变，让相应的程序可以处理。  
+        // 不发送广播时，在非飞行模式下，Android 2.2.1上测试关闭了Wifi,不关闭正常的通话网络(如GMS/GPRS等)。  
+        // 不发送广播时，在飞行模式下，Android 2.2.1上测试无法关闭飞行模式。  
+        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);  
+        // intent.putExtra("Sponsor", "Sodino");  
+        // 2.3及以后，需设置此状态，否则会一直处于与运营商断连的情况  
+        intent.putExtra("state", setAirPlane);  
+        context.sendBroadcast(intent);  
     }
-	@Override
-	public void onClick(View arg0) {
-
-	}  
-  
-   
-  
-}  
+}
