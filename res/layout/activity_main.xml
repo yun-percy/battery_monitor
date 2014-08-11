@@ -8,21 +8,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="#252525"
     tools:context=".MainActivity" >
+    
 	<ImageView 
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:id="@+id/battery_image"
+	    android:layout_marginTop="9dp"
+	    android:paddingLeft="3dp"
 	    android:layout_centerHorizontal="true"
-	    android:layout_alignParentTop="true"
-	    android:src="@drawable/bt50"/>
+	    android:src="@drawable/battery_charge2"/>
 	<ImageView 
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:id="@+id/charge"
-	    android:visibility="gone"
+	    android:id="@+id/battery_image_bg"
 	    android:layout_centerHorizontal="true"
-	    android:layout_alignParentTop="true"
-	    android:src="@drawable/charging"/>
+	    android:src="@drawable/batteryempty"/>
+
+	
+	
 	<ImageView 
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
@@ -31,34 +34,39 @@
 	    android:src="@drawable/line"
 	    android:layout_marginTop="10dp"
 	    />
+	<ImageView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/charge_anmition"
+	    android:visibility="gone"
+	    android:layout_centerInParent="true"
+	    android:src="@drawable/batteryanmiation"/>
+	<TextView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/health"
+	    android:layout_below="@id/line"
+	    android:layout_marginTop="15dp"
+	    android:textColor="#f0f0f0"/>
     <TextView
         android:id="@+id/batterypercent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="6dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
         android:textColor="#e6e6e6"
         android:textSize="35sp"
         android:text="percent" />
 
-    <TextView
-        android:id="@+id/BatteryLevel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/line"
-        android:layout_marginTop="15dp"
-        android:textColor="#f0f0f0"
-         />
     
-	<TextView 
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:id="@+id/health"
-	    android:layout_below="@id/BatteryLevel"
-	    android:textColor="#f0f0f0"/>
+    
+	
 	<TextView 
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:id="@+id/vote"
+	    
 	    android:layout_below="@id/health"
 	    android:textColor="#f0f0f0"/>
 	<TextView 
@@ -74,13 +82,20 @@
 	    android:layout_height="wrap_content"
 	    android:id="@+id/charge_time"
 	    android:textColor="#f0f0f0"
-	    android:layout_marginTop="30dp"
+	    android:layout_marginTop="60dp"
         android:textSize="25sp"
 	    android:layout_below="@id/tempearture"
 	    android:layout_centerHorizontal="true"/>
+	 <TextView
+        android:id="@+id/BatteryLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tempearture"
+        android:textColor="#f0f0f0"
+        />
 	<TextView
 	    android:layout_width="wrap_content"
-	    android:layout_below="@id/tempearture"
+	    android:layout_below="@id/BatteryLevel"
 	    android:layout_height="wrap_content"
 	    android:id="@+id/hit_time"
 	    android:textColor="#f0f0f0"
@@ -91,7 +106,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="电量使用情况"
-        
         android:background="@drawable/button_bg"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
@@ -101,11 +115,9 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_alignParentBottom="true"
-	    
-	    
 	    android:id="@+id/powersave"
 	    android:textColor="#f0f0f0"
 	    android:background="@drawable/button_bg"
 	    android:text="一键省电"/>
-	
+
 </RelativeLayout>

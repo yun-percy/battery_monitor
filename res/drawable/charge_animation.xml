@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:drawable="@drawable/batteryanmiation1" android:duration="250"></item>
+    <item android:drawable="@drawable/batteryanmiation2" android:duration="250"></item>
+    <item android:drawable="@drawable/batteryanmiation3" android:duration="250"></item>
+    <item android:drawable="@drawable/batteryanmiation4" android:duration="250"></item>
+    <item android:drawable="@drawable/batteryanmiation5" android:duration="250"></item>
+    <item android:drawable="@drawable/batteryanmiation6" android:duration="250"></item>
+    <item android:drawable="@drawable/batteryanmiation7" android:duration="250"></item>
+    <item android:drawable="@drawable/batteryanmiation8" android:duration="250"></item>
+    <item android:drawable="@drawable/batteryanmiation9" android:duration="250"></item>
+    <item android:drawable="@drawable/batteryanmiation10" android:duration="250"></item>
+    <item android:drawable="@drawable/batteryanmiation11" android:duration="3250"></item>
+    
+
+</animation-list>
