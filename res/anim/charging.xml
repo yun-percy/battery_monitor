@@ -5,11 +5,13 @@
 <translate
     android:repeatCount="-1" 
     android:repeatMode="restart"
-android:fromXDelta="-1800"
-android:toXDelta="1800"
-android:fromYDelta="0"
-android:toYDelta="0"
+android:fromXDelta="0"
+android:toXDelta="0"
+android:fromYDelta="4000"
+android:toYDelta="-165"
 android:duration="15000"
+
 />
+
 
 </set>
