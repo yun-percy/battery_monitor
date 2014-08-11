@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -172,7 +173,7 @@ public class MainActivity extends Activity {
 	private BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context c, Intent i) {
-			String batteryText, percent, connect, statusshow;
+			String batteryText, percent, connect = null, statusshow;
 			int level = i.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 			int plugged = i.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
 			int status = i.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
@@ -180,6 +181,7 @@ public class MainActivity extends Activity {
 			int mhealth = i.getIntExtra(BatteryManager.EXTRA_HEALTH,0);
 			int mtempearture =i.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,0);
 //			System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$    " +mhealth);
+			
 			String healthString = "";
 			                 
 			               switch (mhealth) {
@@ -224,32 +226,49 @@ public class MainActivity extends Activity {
 			// 计算还需充多久电
 			Resources res =getResources();
 			double Charge_factor=1.3;
+			double mCharge_factor=1.5;
 			int Battery_Capacity=res.getInteger(R.integer.battery_capacity);
 			int h=0;
 			int m=0;
-			int s=0;
+			double t=0;
 			int Charge_Mode_Volume = 500;
-			if (plugged == 1){
+			if (plugged == 1 && level <90){
 				Charge_factor=1.2;
 				Charge_Mode_Volume=res.getInteger(R.integer.ac_charge);
 			}
-				else {
+			else if(plugged == 1 && level >= 90){
+				mCharge_factor=1.4;
+				Charge_Mode_Volume=res.getInteger(R.integer.ac_charge);
+			}
+			else if(plugged == 2 && level >=90){
+				Charge_Mode_Volume=res.getInteger(R.integer.usb_charge);
+				mCharge_factor=1.7;
+				System.out.println("#################"+plugged+"###############");
+			}
+			else {
+					
 					Charge_Mode_Volume=res.getInteger(R.integer.usb_charge);
 					Charge_factor=1.4;
+					
 			}
 			double Battery_Level = (double)level;
-			h=(int)(Battery_Capacity*Charge_factor*(1-Battery_Level/100)/Charge_Mode_Volume) ;
-			m=(int) ((Battery_Capacity*Charge_factor*(1-Battery_Level/100)/Charge_Mode_Volume -h)*60);
+			if (level <90){
+				
+				t=Battery_Capacity*Charge_factor*(0.9-Battery_Level/100)/Charge_Mode_Volume+Battery_Capacity*mCharge_factor*0.1/Charge_Mode_Volume;
+				h=(int)t ;
+				m=(int)(t-h)*60;
+			}
+			else if (level >= 90){
+				t=Battery_Capacity*mCharge_factor*(1-Battery_Level/100)/Charge_Mode_Volume;
+				h=(int)t;
+				m=(int)(t-h)*60;
+			}
+			
+			//h=(int)(Battery_Capacity*Charge_factor*(1-Battery_Level/100)/Charge_Mode_Volume) ;
+			//m=(int) ((Battery_Capacity*Charge_factor*(1-Battery_Level/100)/Charge_Mode_Volume -h)*60);
 			charge_time.setText( h +"小时 "+m+"分钟");
+			
 		
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			
 			//----------------------分割线------------
@@ -273,43 +292,46 @@ public class MainActivity extends Activity {
 //			 
 //			boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||status == BatteryManager.BATTERY_STATUS_FULL;
 //			// temperature = (temperature - 32) * 5/9;
-			if (plugged == 0) {
-				connect = "未连接";
-				charge_animation.clearAnimation();  
-				//charge_animation.setVisibility(8);
-				BatteryShow.setVisibility(8);
-				
-				vote.setVisibility(8);
-				charge_time.setVisibility(8);
-				hit_time.setVisibility(8);
-				
+			if (plugged == 0) {//此处表示未链接电源或者USB
+				charge_animation.clearAnimation();  //停止充电平移动画
+				charge_animation.setVisibility(8);//去掉动画文件显示
+				BatteryShow.setVisibility(8);//去掉已连接到USB
+				battery_image.setImageResource(R.drawable.battery);//将电量动画改为静态动画
+				vote.setVisibility(8);//去掉充电电压显示
+				charge_time.setVisibility(8);//去掉充电剩余时间显示
+				hit_time.setVisibility(8);//去掉剩余充电时间显示
 			} else if (plugged == 1) {
 				connect = "电源";
 				BatteryShow.setVisibility(0);
-				
 				vote.setVisibility(0);
 				charge_time.setVisibility(0);
 				hit_time.setVisibility(0);
 			} else {
 				connect = "USB";
 				BatteryShow.setVisibility(0);
-				
 				vote.setVisibility(0);
 				charge_time.setVisibility(0);
 				hit_time.setVisibility(0);
 			}
-			
-			if (status == 2) {
+			if (status == 2 && level !=100) {
 				statusshow = "正在充电";
+				battery_image.setImageResource(R.drawable.battery_charge2);
 				charge_animation.setVisibility(0);
 				charge_animation.startAnimation(operatingAnim);  
+				charge_time.setTextSize(28);
 			
 			} 
-			else if(status == 5){
+			else if(level == 100){
 				statusshow = "正在涓流保护充电";
-//				charge.setVisibility(0);
+				charge_animation.setVisibility(0);
 				charge_animation.startAnimation(operatingAnim);  
+				hit_time.setVisibility(8);
+				charge_time.setText("         电池已充满\n正在进行涓流充电保养....");
+				charge_time.setTextSize(15);
 			}
+			
+				
+			
 			else {
 				System.out.println("status is==== ===========" + status);
 				statusshow = "放电中";
@@ -319,10 +341,6 @@ public class MainActivity extends Activity {
 			Batteryp.setText(percent);
 			
 		}	
-			
-	
-		
-			
 		
 		
 		OnClickListener settingOnClickListener =new OnClickListener() {

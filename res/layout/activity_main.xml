@@ -23,9 +23,6 @@
 	    android:id="@+id/battery_image_bg"
 	    android:layout_centerHorizontal="true"
 	    android:src="@drawable/batteryempty"/>
-
-	
-	
 	<ImageView 
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
@@ -54,19 +51,15 @@
         android:layout_height="wrap_content"
         android:padding="6dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="80dp"
         android:textColor="#e6e6e6"
         android:textSize="35sp"
         android:text="percent" />
 
-    
-    
-	
 	<TextView 
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:id="@+id/vote"
-	    
 	    android:layout_below="@id/health"
 	    android:textColor="#f0f0f0"/>
 	<TextView 
