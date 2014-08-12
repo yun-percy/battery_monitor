@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -21,7 +23,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -319,6 +321,7 @@ public class MainActivity extends Activity {
 				charge_animation.setVisibility(0);
 				charge_animation.startAnimation(operatingAnim);  
 				charge_time.setTextSize(28);
+				charge_time.setText( h +"小时 "+m+"分钟");
 			
 			} 
 			else if(level == 100){
@@ -381,6 +384,38 @@ public class MainActivity extends Activity {
 	    	manager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
 	    	manager.setWifiEnabled(false);   
 	    }
+	 @Override
+	 public boolean onKeyDown(int keyCode, KeyEvent event) {
+	     // TODO Auto-generated method stub
+	     if(keyCode == KeyEvent.KEYCODE_BACK)
+	        {  
+	            exitBy2Click();      //调用双击退出函数
+	        }
+	     return false;
+	 }
+	 /**
+	  * 双击退出函数
+	  */
+	 private static Boolean isExit = false;
+	      
+	 private void exitBy2Click() {
+	     Timer tExit = null;
+	     if (isExit == false) {
+	         isExit = true; // 准备退出
+	         Toast.makeText(this, "再按一次退出电量管家", Toast.LENGTH_SHORT).show();
+	         tExit = new Timer();
+	         tExit.schedule(new TimerTask() {
+	             @Override
+	             public void run() {
+	                 isExit = false; // 取消退出
+	             }
+	         }, 2000); // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
+	      
+	     } else {
+	         finish();
+	         System.exit(0);
+	     }
+	 }
 	}
 
 

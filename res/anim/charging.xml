@@ -9,7 +9,7 @@ android:fromXDelta="0"
 android:toXDelta="0"
 android:fromYDelta="4000"
 android:toYDelta="-165"
-android:duration="15000"
+android:duration="10000"
 
 />
 
