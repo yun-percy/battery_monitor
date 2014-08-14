@@ -15,14 +15,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.graphics.drawable.AnimationDrawable;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -42,13 +41,10 @@ public class MainActivity extends Activity {
 	private Button powersave;
 	private int screenMode;  
 	private ImageView charge_animation;
-	private Context context;  
-    private ConnectivityManager connManager;  
     private static final String TAG = "ScreenLuminance";  
     private int screenBrightness; 
     boolean isEnabled;
-    private AnimationDrawable animationDrawable;
-
+    CircleProgress round;
     private static final int WIFI = 0;  
 
 	@Override
@@ -112,24 +108,20 @@ public class MainActivity extends Activity {
                
                if(apinfo.importance>0)
                {
-                  // Process.killProcess(apinfo.pid);
                    for(int j=0;j<pkgList.length;j++)
                    {
-                       //2.2以上是过时的,请用killBackgroundProcesses代替
                        activityManger.killBackgroundProcesses(pkgList[j]);
                        System.out.println("now kill:"+pkgList[j]);
-                      
-                      
                    } 
                }
            }
            Toast.makeText(MainActivity.this, "调整屏幕亮度" ,Toast.LENGTH_SHORT ).show();
 	       try {  
 	            screenMode = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE);  
-	            Log.i(TAG, "screenMode = " + screenMode);  
+	       //     Log.i(TAG, "screenMode = " + screenMode);  
 	            // 获得当前屏幕亮度值 0--255  
 	            screenBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);  
-	            Log.i(TAG, "screenBrightness = " + screenBrightness);  
+	       //   //  Log.i(TAG, "screenBrightness = " + screenBrightness);  
 	            // 如果当前的屏幕亮度调节调节模式为自动调节，则改为手动调节屏幕亮度  
 	            if (screenMode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {  
 	                setScreenMode(Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);  
@@ -137,10 +129,8 @@ public class MainActivity extends Activity {
 	            // 设置屏幕亮度值为最大值0.0  
 	            setScreenBrightness(3.0F);  
 	            } catch (SettingNotFoundException e) {  
-	                // TODO Auto-generated catch block  
 	                e.printStackTrace();  
 	            	}  
-	       	
 	       Toast.makeText(MainActivity.this, "恭喜！ 您的手机已达到最佳省电状态" ,Toast.LENGTH_SHORT ).show();
 			}
 	
@@ -153,7 +143,6 @@ public class MainActivity extends Activity {
 	        float f = value / 255.0F;  
 	        mParams.screenBrightness = f;  
 	        mWindow.setAttributes(mParams);  
-	  
 	        // 保存设置的屏幕亮度值  
 	        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, (int) value);  
 	    }  
@@ -176,9 +165,9 @@ public class MainActivity extends Activity {
 		@Override
 		public void onReceive(Context c, Intent i) {
 			String batteryText, percent, connect = null, statusshow;
-			int level = i.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+			final int level = i.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 			int plugged = i.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
-			int status = i.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
+			final int status = i.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
 			int vate = i.getIntExtra(BatteryManager.EXTRA_VOLTAGE,0);
 			int mhealth = i.getIntExtra(BatteryManager.EXTRA_HEALTH,0);
 			int mtempearture =i.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,0);
@@ -214,9 +203,10 @@ public class MainActivity extends Activity {
 			TextView charge_time=(TextView) findViewById(R.id.charge_time);
 			TextView hit_time=(TextView)findViewById(R.id.hit_time);
 			TextView tempearture =(TextView) findViewById(R.id.tempearture);
-			ImageView battery_image = (ImageView) findViewById(R.id.battery_image);
+		//	ImageView battery_image = (ImageView) findViewById(R.id.battery_image);
 			TextView vote =(TextView)findViewById(R.id.vote);
 			vote.setText("充电电压 ： " + vate/1000 + "V");
+			round= (CircleProgress) findViewById(R.id.round);
 			health.setText("电池状态 ：" + healthString);
 			tempearture.setText("电池温度 ："+mtempearture/10+"℃");
 			charge_animation=(ImageView)findViewById(R.id.charge_anmition);
@@ -258,12 +248,12 @@ public class MainActivity extends Activity {
 				
 				t=Battery_Capacity*Charge_factor*(0.9-Battery_Level/100)/Charge_Mode_Volume+Battery_Capacity*mCharge_factor*0.1/Charge_Mode_Volume;
 				h=(int)t ;
-				m=(int)(t-h)*60;
+				m=(int)((t-h)*60);
 			}
 			else if (level >= 90){
 				t=Battery_Capacity*mCharge_factor*(1-Battery_Level/100)/Charge_Mode_Volume;
 				h=(int)t;
-				m=(int)(t-h)*60;
+				m=(int)((t-h)*60);
 			}
 			
 			//h=(int)(Battery_Capacity*Charge_factor*(1-Battery_Level/100)/Charge_Mode_Volume) ;
@@ -276,29 +266,56 @@ public class MainActivity extends Activity {
 			//----------------------分割线------------
 			// 电量显示
 			
-//				battery_image.setImageAlpha(R.drawable.battery_charge);
-				battery_image.setImageLevel(level);;
-			
-			
-			
-			
+			round.setType(CircleProgress.ROUND);
+			 new AsyncTask<Integer, Integer, Integer>() {
+                 @Override
+                 protected Integer doInBackground(Integer... params) {
+                	 if(status == 2 && level < 90){
+                		 for(int i=0;i<=level;i++){
+                             publishProgress(i);
+                             try {
+                                 Thread.sleep(150);
+                             } catch (InterruptedException e) {
+                                 e.printStackTrace();
+                             }
+                         }
+                	 }
+                	 else if (status == 2 && level >= 90 && level !=100){
+                     for(int i=0;i<=level;i++){
+                         publishProgress(i);
+                         try {
+                             Thread.sleep(500);
+                         } catch (InterruptedException e) {
+                             e.printStackTrace();
+                         }
+                     }
+                	 }
+                	 else {
+                             publishProgress(level);
+                             try {
+                                 Thread.sleep(500);
+                             } catch (InterruptedException e) {
+                                 e.printStackTrace();
+                             }
+                	 }
+                     return null;
+                 }
+                 @Override
+                 protected void onProgressUpdate(Integer... values) {
+                     super.onProgressUpdate(values);
+                     round.setmSubCurProgress(values[0]);
+                 }
+             }.execute(0);
 			//----------------------分割线---------
 			if (operatingAnim != null && charge_animation != null && operatingAnim.hasStarted()) {  
 		    	charge_animation.clearAnimation();  
 		        charge_animation.startAnimation(operatingAnim);  
 			}
-//			charge_animation.setImageResource(R.drawable.charge_animation);
-//			animationDrawable=(AnimationDrawable) charge_animation.getDrawable();
-//			animationDrawable.start();
-//			int status = i.getIntExtra(BatteryManager.EXTRA_STATUS,-1);
-//			 
-//			boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||status == BatteryManager.BATTERY_STATUS_FULL;
-//			// temperature = (temperature - 32) * 5/9;
 			if (plugged == 0) {//此处表示未链接电源或者USB
 				charge_animation.clearAnimation();  //停止充电平移动画
 				charge_animation.setVisibility(8);//去掉动画文件显示
 				BatteryShow.setVisibility(8);//去掉已连接到USB
-				battery_image.setImageResource(R.drawable.battery);//将电量动画改为静态动画
+				//battery_image.setImageResource(R.drawable.battery);//将电量动画改为静态动画
 				vote.setVisibility(8);//去掉充电电压显示
 				charge_time.setVisibility(8);//去掉充电剩余时间显示
 				hit_time.setVisibility(8);//去掉剩余充电时间显示
@@ -317,12 +334,10 @@ public class MainActivity extends Activity {
 			}
 			if (status == 2 && level !=100) {
 				statusshow = "正在充电";
-				battery_image.setImageResource(R.drawable.battery_charge2);
 				charge_animation.setVisibility(0);
 				charge_animation.startAnimation(operatingAnim);  
 				charge_time.setTextSize(28);
 				charge_time.setText( h +"小时 "+m+"分钟");
-			
 			} 
 			else if(level == 100){
 				statusshow = "正在涓流保护充电";
@@ -332,9 +347,6 @@ public class MainActivity extends Activity {
 				charge_time.setText("         电池已充满\n正在进行涓流充电保养....");
 				charge_time.setTextSize(15);
 			}
-			
-				
-			
 			else {
 				System.out.println("status is==== ===========" + status);
 				statusshow = "放电中";
@@ -342,10 +354,7 @@ public class MainActivity extends Activity {
 			batteryText = "已连接到 ："+ connect ;
 			BatteryShow.setText(batteryText);
 			Batteryp.setText(percent);
-			
 		}	
-		
-		
 		OnClickListener settingOnClickListener =new OnClickListener() {
 			
 			@Override
@@ -354,7 +363,6 @@ public class MainActivity extends Activity {
 				Intent it = new Intent("android.intent.action.MAIN");
 			     it.setClassName("com.android.settings","com.android.settings.fuelgauge.PowerUsageSummary");
 			    startActivity(it);
-				
 			}
 		};
 		
@@ -362,10 +370,8 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
-	
 	}
 	private void setMobileDataEnabled(Context context, boolean enabled) throws ClassNotFoundException, SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         final ConnectivityManager conman = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -375,8 +381,6 @@ public class MainActivity extends Activity {
         final Object iConnectivityManager = iConnectivityManagerField.get(conman);
         final Class iConnectivityManagerClass = Class.forName(iConnectivityManager.getClass().getName());
         final Method setMobileDataEnabledMethod = iConnectivityManagerClass.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
-       // setMobileDataEnabledMethod.setAccessible(true);
-
         setMobileDataEnabledMethod.invoke(iConnectivityManager, enabled);
     }
 	 public static void toggle(Context context, int idx) {  
@@ -386,7 +390,6 @@ public class MainActivity extends Activity {
 	    }
 	 @Override
 	 public boolean onKeyDown(int keyCode, KeyEvent event) {
-	     // TODO Auto-generated method stub
 	     if(keyCode == KeyEvent.KEYCODE_BACK)
 	        {  
 	            exitBy2Click();      //调用双击退出函数

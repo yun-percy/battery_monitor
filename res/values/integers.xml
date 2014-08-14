@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    
+    <!-- for la2w la2e la2wmtk la2t la2l la2t1 la2w1 -->
+    <integer name="battery_capacity">1900</integer>
     <integer name="usb_charge">450</integer>
     <integer name="ac_charge">610</integer>
-    <integer name="battery_full">1900</integer>
-    <integer name="battery_capacity">1900</integer>
-    
+    <!-- for la3w la3sw la3e-->
+    <!-- <integer name="battery_capacity">2400</integer>
+    <integer name="usb_charge">450</integer>
+    <integer name="ac_charge">610</integer> -->
+    <!-- for la5w 
+     <integer name="battery_capacity">2700</integer> 
+     <integer name="usb_charge">430</integer>
+    <integer name="ac_charge">800</integer>-->
 </resources>
