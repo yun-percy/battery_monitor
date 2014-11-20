@@ -23,4 +23,5 @@ local.properties
 proguard/
 
 # Log Files
-*.log
+*.loggen/
+bin/
