@@ -3,6 +3,12 @@
 
     <string name="app_name">电池管理</string>
     <string name="action_settings">设置</string>
-    
-
+    <string name="battery_status">电池状态</string>
+    <string name="lookingbattery">正在监控电池</string>
+	<string name="charinglefttime">剩余充电时间:</string>
+	<string name="batteryisage">电量使用情况</string>
+	<string name="savapower">一键省电</string>
+	<string name="Upload">一键省电</string>
+    <string name="Error">Error</string>
+    <string name="Complete">优化完成</string>
 </resources>

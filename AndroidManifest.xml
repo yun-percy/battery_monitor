@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yusun.batterymonitor"
     android:versionCode="1"
-
-    android:versionName="1.0" >
+	coreApp="ture"
+    android:versionName="2.0" >
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>  
 	<uses-permission android:name="android.permission.BLUETOOTH" />
@@ -21,21 +21,18 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@android:style/Theme.Holo.Light" >
         <activity
             android:name="com.yusun.batterymonitor.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.NoActionBar"
             android:label="@string/app_name" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <action android:name="android.intent.action.BATTERY_USAGE_SUMMARY"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <category android:name="com.android.settings.SHORTCUT"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity 
-            android:name=".ActToggleGPS"></activity>
+       
     </application>
 
 </manifest>

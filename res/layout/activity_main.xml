@@ -1,124 +1,134 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="#252525"
-    tools:context=".MainActivity" >
-    <com.yusun.batterymonitor.CircleProgress
-        android:layout_width="190dip" 
+    android:background="#fff"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent" >
+    <ImageView 
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:contentDescription="@string/app_name"
+        android:background="#01b1ea"/>
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/app_name"
+        android:textColor="#fff"
+        android:textSize="16sp"
+        android:id="@+id/title"
+        />
+
+
+    <com.yusun.batterymonitor.RoundImageView
+        android:layout_width="match_parent" 
         android:layout_height="190dip"
         android:id="@+id/round"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="55dp"
         android:paddingLeft="3dp"
         android:layout_centerHorizontal="true"
+        android:onClick="savepower"
             />
-    
-	<!-- <ImageView 
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:id="@+id/battery_image"
-	    android:layout_marginTop="9dp"
-	    android:paddingLeft="3dp"
-	    android:layout_centerHorizontal="true"
-	    android:src="@drawable/battery_charge1"/>-->
-	<ImageView 
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:id="@+id/battery_image_bg"
-	    android:layout_centerHorizontal="true"
-	    android:src="@drawable/batteryempty"/>
-	<ImageView 
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:id="@+id/line"
-	    android:layout_centerInParent="true"
-	    android:src="@drawable/line"
-	    android:layout_marginTop="10dp"
-	    />
-	<ImageView 
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:id="@+id/charge_anmition"
-	    android:visibility="gone"
-	    android:layout_centerInParent="true"
-	    android:src="@drawable/batteryanmiation"/>
 	<TextView 
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:layout_below="@id/round"
+    	android:layout_centerHorizontal="true"
+    	android:layout_marginTop="40dp"
+    	android:textSize="12sp"
+    	android:id="@+id/lookingbattery"
+    	android:text="@string/lookingbattery"
+    	android:textColor="#fff"
+    />
+
+	
+	<TextView 
+	    style="@style/hintText"
 	    android:id="@+id/health"
-	    android:layout_below="@id/line"
+	    android:layout_below="@id/lookingbattery"
 	    android:layout_marginTop="15dp"
-	    android:textColor="#f0f0f0"/>
+	    />
     <TextView
         android:id="@+id/batterypercent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="6dp"
+        android:textColor="#f0f0f0"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
-        android:textColor="#e6e6e6"
+        android:layout_marginTop="120dp"
         android:textSize="35sp"
-        android:text="percent" />
+         />
 
 	<TextView 
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
+	    style="@style/hintText"
 	    android:id="@+id/vote"
 	    android:layout_below="@id/health"
-	    android:textColor="#f0f0f0"/>
+	   />
 	<TextView 
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
+	    style="@style/hintText"
 	    android:id="@+id/tempearture"
-	    android:textColor="#f0f0f0"
 	    android:layout_below="@id/vote"
 	     />
 	
 	<TextView 
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
+	    style="@style/hintText"
 	    android:id="@+id/charge_time"
-	    android:textColor="#f0f0f0"
 	    android:layout_marginTop="60dp"
         android:textSize="25sp"
 	    android:layout_below="@id/tempearture"
 	    android:layout_centerHorizontal="true"/>
 	 <TextView
         android:id="@+id/BatteryLevel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/hintText"
         android:layout_below="@id/tempearture"
-        android:textColor="#f0f0f0"
         />
 	<TextView
-	    android:layout_width="wrap_content"
 	    android:layout_below="@id/BatteryLevel"
-	    android:layout_height="wrap_content"
 	    android:id="@+id/hit_time"
-	    android:textColor="#f0f0f0"
 	    android:visibility="gone"
-	    android:text="剩余充电时间:"
+	    style="@style/hintText"
+	    android:text="@string/charinglefttime"
 	   />
-    <Button 
+ <!--   <Button 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="电量使用情况"
+        android:text="@string/batteryisage"
         android:background="@drawable/button_bg"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:textColor="#e4e4e4"
         android:id="@+id/settingsbutton"/>
-	<Button
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentBottom="true"
-	    android:id="@+id/powersave"
-	    android:textColor="#f0f0f0"
-	    android:background="@drawable/button_bg"
-	    android:text="一键省电"/>
+	 --> 
+	
+	<com.yusun.batterymonitor.CircularProgressButton
+            android:id="@+id/circularButton1"
+            android:layout_width="120dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/cpb_white"
+            android:layout_alignParentBottom="true"
+            android:textSize="18sp"
+            app:cpb_cornerRadius="48dp"
+            android:layout_margin="10dp"
+            app:cpb_paddingProgress="10dp"
+            android:visibility="gone"
+            app:cpb_textComplete="@string/Complete"
+            app:cpb_textError="@string/Error"
+            app:cpb_textIdle="@string/Upload" />
+	<com.yusun.batterymonitor.CircularProgressButton
+            android:id="@+id/settingsbutton"
+            android:layout_width="140dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/cpb_white"
+            android:layout_centerHorizontal="true"
+        	android:layout_alignParentBottom="true"
+            android:textSize="18sp"
+            app:cpb_cornerRadius="48dp"
+            android:layout_margin="10dp"
+            app:cpb_paddingProgress="10dp"
+            app:cpb_textComplete="@string/Complete"
+            app:cpb_textError="@string/Error"
+            app:cpb_textIdle="@string/batteryisage" />
 
 </RelativeLayout>

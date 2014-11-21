@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.bluetooth.BluetoothAdapter;
@@ -20,6 +21,7 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Message;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.view.KeyEvent;
@@ -28,11 +30,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,11 +42,10 @@ public class MainActivity extends Activity {
 	private Button settingbutton;
 	private Button powersave;
 	private int screenMode;  
-	private ImageView charge_animation;
     private static final String TAG = "ScreenLuminance";  
     private int screenBrightness; 
     boolean isEnabled;
-    CircleProgress round;
+//    CircleProgress round;
     private static final int WIFI = 0;  
 
 	@Override
@@ -53,101 +54,54 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 
-	       powersave=(Button)findViewById(R.id.powersave);
-			powersave.setOnClickListener(powersaveListener);
-			
+//	       powersave=(Button)findViewById(R.id.powersave);
+//			powersave.setOnClickListener(powersaveListener);
+			 final CircularProgressButton circularButton1 = (CircularProgressButton) findViewById(R.id.circularButton1);
+		        circularButton1.setOnClickListener(new View.OnClickListener() {
+		            @Override
+		            public void onClick(View v) {
+		                if (circularButton1.getProgress() == 0) {
+		                    simulateSuccessProgress(circularButton1);
+		                } 
+		                    else {
+		                    circularButton1.setProgress(0);
+		                }
+		            
+		        
+//	            	closedata();
+//
+//	    			closebluetooth_wifi_time();
+//
+//	    			close_app();
+//	 
+//	    	        turndown();
+	    	        
+//	                if (circularButton1.getProgress() == 0) {
+//	                    circularButton1.setProgress(50);
+//	                } else if (circularButton1.getProgress() == 100) {
+//	                    circularButton1.setProgress(0);
+//	                } else {
+//	                }
+	            }
+	        });
 			 
 	}
-	OnClickListener powersaveListener = new OnClickListener() {
-		
-		@Override
-		public void onClick(View v) {
-			//
-			Toast.makeText(MainActivity.this, "正在关闭数据链接" ,Toast.LENGTH_SHORT ).show();
-			if(isEnabled){
-				isEnabled=false;
-			}
-			try {
-				setMobileDataEnabled(MainActivity.this, isEnabled);
-			} catch (SecurityException e) {
-				//e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				//e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				//e.printStackTrace();
-			} catch (NoSuchFieldException e) {
-				//e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				//e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				//e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				//e.printStackTrace();
-			}
-//			 Intent psave = new Intent();
-//			 psave.setClass(MainActivity.this,ActToggleGPS.class);
-//			 startActivity(psave);
-			Toast.makeText(MainActivity.this, "正在关闭蓝牙" ,Toast.LENGTH_SHORT ).show();
-			BluetoothAdapter bluetoothadapter = BluetoothAdapter.getDefaultAdapter();
-	       bluetoothadapter.disable();
-	       Toast.makeText(MainActivity.this, "正在关闭WIFI" ,Toast.LENGTH_SHORT ).show();
-	       toggle(MainActivity.this,WIFI);
-	       Toast.makeText(MainActivity.this, "调整休眠时间" ,Toast.LENGTH_SHORT ).show();
-	       Settings.System.putInt(getContentResolver(),android.provider.Settings.System.SCREEN_OFF_TIMEOUT,-1);
-	       Toast.makeText(MainActivity.this, "清理一大波后台应用" ,Toast.LENGTH_SHORT ).show();
-	       ActivityManager activityManger=(ActivityManager) MainActivity.this.getSystemService(ACTIVITY_SERVICE);
-           List<ActivityManager.RunningAppProcessInfo> list=activityManger.getRunningAppProcesses();
-           if(list!=null)
-           for(int i=0;i<list.size();i++)
-           {
-               ActivityManager.RunningAppProcessInfo apinfo=list.get(i);
-               System.out.println("pid            "+apinfo.pid);
-               System.out.println("processName              "+apinfo.processName);
-               System.out.println("importance            "+apinfo.importance);
-               String[] pkgList=apinfo.pkgList;
-               
-               if(apinfo.importance>0)
-               {
-                   for(int j=0;j<pkgList.length;j++)
-                   {
-                       activityManger.killBackgroundProcesses(pkgList[j]);
-                       System.out.println("now kill:"+pkgList[j]);
-                   } 
-               }
-           }
-           Toast.makeText(MainActivity.this, "调整屏幕亮度" ,Toast.LENGTH_SHORT ).show();
-	       try {  
-	            screenMode = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE);  
-	       //     Log.i(TAG, "screenMode = " + screenMode);  
-	            // 获得当前屏幕亮度值 0--255  
-	            screenBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);  
-	       //   //  Log.i(TAG, "screenBrightness = " + screenBrightness);  
-	            // 如果当前的屏幕亮度调节调节模式为自动调节，则改为手动调节屏幕亮度  
-	            if (screenMode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {  
-	                setScreenMode(Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);  
-	            	}  
-	            // 设置屏幕亮度值为最大值0.0  
-	            setScreenBrightness(3.0F);  
-	            } catch (SettingNotFoundException e) {  
-	                e.printStackTrace();  
-	            	}  
-	       Toast.makeText(MainActivity.this, "恭喜！ 您的手机已达到最佳省电状态" ,Toast.LENGTH_SHORT ).show();
-			}
+//	OnClickListener powersaveListener = new OnClickListener() {
+//		
+//		@Override
+//		public void onClick(View v) {
+////			closedata();
+////			closebluetooth_wifi_time();
+////			close_app();
+////	        turndown();
+////	       
+//           
+//	       
+//			}
 	
-		private void setScreenMode(int value) {  
-	        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, value);  
-	    }  
-	    private void setScreenBrightness(float value) {  
-	        Window mWindow = getWindow();  
-	        WindowManager.LayoutParams mParams = mWindow.getAttributes();  
-	        float f = value / 255.0F;  
-	        mParams.screenBrightness = f;  
-	        mWindow.setAttributes(mParams);  
-	        // 保存设置的屏幕亮度值  
-	        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, (int) value);  
-	    }  
+		
 	    	
-	};
+//	};
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -160,18 +114,21 @@ public class MainActivity extends Activity {
 		registerReceiver(this.batteryInfoReceiver, new IntentFilter(
 				Intent.ACTION_BATTERY_CHANGED));
 	}
-
+	 int level;
 	private BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context c, Intent i) {
 			String batteryText, percent, connect = null, statusshow;
-			final int level = i.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+			level = i.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
 			int plugged = i.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
 			final int status = i.getIntExtra(BatteryManager.EXTRA_STATUS, 0);
 			int vate = i.getIntExtra(BatteryManager.EXTRA_VOLTAGE,0);
 			int mhealth = i.getIntExtra(BatteryManager.EXTRA_HEALTH,0);
 			int mtempearture =i.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,0);
-//			System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$    " +mhealth);
+			Message msg = new Message();
+            msg.what = RoundImageView.FLAG;
+            msg.obj=level+"";
+            RoundImageView.handler.sendMessage(msg); 
 			
 			String healthString = "";
 			                 
@@ -206,10 +163,9 @@ public class MainActivity extends Activity {
 		//	ImageView battery_image = (ImageView) findViewById(R.id.battery_image);
 			TextView vote =(TextView)findViewById(R.id.vote);
 			vote.setText("充电电压 ： " + vate/1000 + "V");
-			round= (CircleProgress) findViewById(R.id.round);
+//			round= (CircleProgress) findViewById(R.id.round);
 			health.setText("电池状态 ：" + healthString);
 			tempearture.setText("电池温度 ："+mtempearture/10+"℃");
-			charge_animation=(ImageView)findViewById(R.id.charge_anmition);
 			settingbutton=(Button) findViewById(R.id.settingsbutton);
 			settingbutton.setOnClickListener(settingOnClickListener);
 			Animation operatingAnim = AnimationUtils.loadAnimation(MainActivity.this, R.anim.charging);  
@@ -235,7 +191,6 @@ public class MainActivity extends Activity {
 			else if(plugged == 2 && level >=90){
 				Charge_Mode_Volume=res.getInteger(R.integer.usb_charge);
 				mCharge_factor=1.7;
-				System.out.println("#################"+plugged+"###############");
 			}
 			else {
 					
@@ -266,7 +221,7 @@ public class MainActivity extends Activity {
 			//----------------------分割线------------
 			// 电量显示
 			
-			round.setType(CircleProgress.ROUND);
+//			round.setType(CircleProgress.ROUND);
 			 new AsyncTask<Integer, Integer, Integer>() {
                  @Override
                  protected Integer doInBackground(Integer... params) {
@@ -303,17 +258,11 @@ public class MainActivity extends Activity {
                  @Override
                  protected void onProgressUpdate(Integer... values) {
                      super.onProgressUpdate(values);
-                     round.setmSubCurProgress(values[0]);
+//                     round.setmSubCurProgress(values[0]);
                  }
              }.execute(0);
 			//----------------------分割线---------
-			if (operatingAnim != null && charge_animation != null && operatingAnim.hasStarted()) {  
-		    	charge_animation.clearAnimation();  
-		        charge_animation.startAnimation(operatingAnim);  
-			}
 			if (plugged == 0) {//此处表示未链接电源或者USB
-				charge_animation.clearAnimation();  //停止充电平移动画
-				charge_animation.setVisibility(8);//去掉动画文件显示
 				BatteryShow.setVisibility(8);//去掉已连接到USB
 				//battery_image.setImageResource(R.drawable.battery);//将电量动画改为静态动画
 				vote.setVisibility(8);//去掉充电电压显示
@@ -334,15 +283,11 @@ public class MainActivity extends Activity {
 			}
 			if (status == 2 && level !=100) {
 				statusshow = "正在充电";
-				charge_animation.setVisibility(0);
-				charge_animation.startAnimation(operatingAnim);  
 				charge_time.setTextSize(28);
 				charge_time.setText( h +"小时 "+m+"分钟");
 			} 
 			else if(level == 100){
 				statusshow = "正在涓流保护充电";
-				charge_animation.setVisibility(0);
-				charge_animation.startAnimation(operatingAnim);  
 				hit_time.setVisibility(8);
 				charge_time.setText("         电池已充满\n正在进行涓流充电保养....");
 				charge_time.setTextSize(15);
@@ -419,6 +364,181 @@ public class MainActivity extends Activity {
 	         System.exit(0);
 	     }
 	 }
+	 private void closedata() {
+//		 Toast.makeText(MainActivity.this, "正在关闭数据链接" ,Toast.LENGTH_SHORT ).show();
+			if(isEnabled){
+				isEnabled=false;
+			}
+			try {
+				setMobileDataEnabled(MainActivity.this, isEnabled);
+			} catch (SecurityException e) {
+				//e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				//e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				//e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				//e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				//e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				//e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				//e.printStackTrace();
+			}
+
 	}
+	 private void closebluetooth_wifi_time() {
+//		 Toast.makeText(MainActivity.this, "正在关闭蓝牙" ,Toast.LENGTH_SHORT ).show();
+			BluetoothAdapter bluetoothadapter = BluetoothAdapter.getDefaultAdapter();
+	       bluetoothadapter.disable();
+//	       Toast.makeText(MainActivity.this, "正在关闭WIFI" ,Toast.LENGTH_SHORT ).show();
+	       toggle(MainActivity.this,WIFI);
+//	       Toast.makeText(MainActivity.this, "调整休眠时间" ,Toast.LENGTH_SHORT ).show();
+	       Settings.System.putInt(getContentResolver(),android.provider.Settings.System.SCREEN_OFF_TIMEOUT,-1);
+
+	}
+	 private void close_app() {
+//		 Toast.makeText(MainActivity.this, "清理一大波后台应用" ,Toast.LENGTH_SHORT ).show();
+	       ActivityManager activityManger=(ActivityManager) MainActivity.this.getSystemService(ACTIVITY_SERVICE);
+         List<ActivityManager.RunningAppProcessInfo> list=activityManger.getRunningAppProcesses();
+         if(list!=null)
+         for(int i=0;i<list.size();i++)
+         {
+             ActivityManager.RunningAppProcessInfo apinfo=list.get(i);
+             System.out.println("pid            "+apinfo.pid);
+             System.out.println("processName              "+apinfo.processName);
+             System.out.println("importance            "+apinfo.importance);
+             String[] pkgList=apinfo.pkgList;
+             
+             if(apinfo.importance>0)
+             {
+                 for(int j=0;j<pkgList.length;j++)
+                 {
+                     activityManger.killBackgroundProcesses(pkgList[j]);
+                     System.out.println("now kill:"+pkgList[j]);
+                 } 
+             }
+         }
+
+	}
+	 Integer value=0;
+	 private void turndown() {
+		 Toast.makeText(MainActivity.this, "调整屏幕亮度" ,Toast.LENGTH_SHORT ).show();
+	       try {  
+	            screenMode = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE);  
+	       //     Log.i(TAG, "screenMode = " + screenMode);  
+	            // 获得当前屏幕亮度值 0--255  
+	            screenBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);  
+	       //   //  Log.i(TAG, "screenBrightness = " + screenBrightness);  
+	            // 如果当前的屏幕亮度调节调节模式为自动调节，则改为手动调节屏幕亮度  
+	            if (screenMode == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {  
+	                setScreenMode(Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);  
+	            	}  
+	            // 设置屏幕亮度值为最大值0.0  
+	            setScreenBrightness(3.0F);  
+	            } catch (SettingNotFoundException e) {  
+	                e.printStackTrace();  
+	            	}  
+
+	}
+	 private void setScreenMode(int value) {  
+	        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, value);  
+	    }  
+	 private void setScreenBrightness(float value) {  
+	        Window mWindow = getWindow();  
+	        WindowManager.LayoutParams mParams = mWindow.getAttributes();  
+	        float f = value / 255.0F;  
+	        mParams.screenBrightness = f;  
+	        mWindow.setAttributes(mParams);  
+	        // 保存设置的屏幕亮度值  
+	        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, (int) value);  
+	    }  
+	 private void simulateSuccessProgress(final CircularProgressButton button) {
+	        ValueAnimator widthAnimation = ValueAnimator.ofInt(1, 100);
+	        widthAnimation.setDuration(3500);
+	        
+	        widthAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+	        
+	        widthAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+	            @Override
+	            public void onAnimationUpdate(ValueAnimator animation) {
+	            	value = (Integer) animation.getAnimatedValue();
+	                
+	                button.setProgress(value);
+	            }
+	        });
+	        closedata();   	    	        
+            closebluetooth_wifi_time();
+            close_app();
+            turndown();
+	        widthAnimation.start();
+	        Toast.makeText(MainActivity.this, "恭喜！ 您的手机已达到最佳省电状态" ,0 ).show();
+	    }
+	 public void savepower(View v) {
+		 closedata();   	    	        
+         closebluetooth_wifi_time();
+         close_app();
+         turndown();
+		 Message msg = new Message();
+         msg.what = RoundImageView.FLAG;
+         msg.obj="savepawer";
+//         for(int i=level;i<0;i--){
+//        	 msg.obj=i+"";
+//
+//        	 try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//        	 RoundImageView.handler.sendMessage(msg); 
+//         }
+//         for(int m=0;m<level;m++){
+//        	 msg.obj=m+"";
+//        	 try {
+// 				Thread.sleep(100);
+// 			} catch (InterruptedException e) {
+// 				// TODO Auto-generated catch block
+// 				e.printStackTrace();
+// 			}
+         new Thread(){
+        	 public void run() {
+        		for (int i = level; i >0 ; i=i-4) {
+        			try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+        			Message msg = new Message();
+                    msg.what = RoundImageView.FLAG;
+                    msg.obj=i+"";
+        			RoundImageView.handler.sendMessage(msg);
+				}
+        		for (int i = 0; i <level ; i=i+4) {
+        			try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+        			Message msg = new Message();
+                    msg.what = RoundImageView.FLAG;
+                    msg.obj=i+"";
+        			RoundImageView.handler.sendMessage(msg);
+				}
+    			Message msg = new Message();
+                msg.what = RoundImageView.FLAG;
+                msg.obj=level+"";
+    			RoundImageView.handler.sendMessage(msg);
+        	 };
+         }.start();
+        	 
+//         }
+//         
+         Toast.makeText(MainActivity.this, "恭喜！ 您的手机已达到最佳省电状态" ,0 ).show();
+	}
+
+
+}
 
 
